@@ -287,7 +287,7 @@ void OtherAvatar::interpolateJoints() {
         // We don't process very old samples for performance reasons, but we remove them only sporadically to avoid excessive reallocations.
         const size_t historyStart = history.size() > OTHER_AVATAR_JOINT_HISTORY_LOOK_BACK ? history.size() - OTHER_AVATAR_JOINT_HISTORY_LOOK_BACK : 0;
         // Calculate latency in microseconds and new time point.
-        quint64 latency = 0;
+        quint64 latency = 1;
         // We cannot calculate latency from just one sample.
         if (history.size() >= 2) {
             size_t latencySamples = 0;
@@ -300,14 +300,14 @@ void OtherAvatar::interpolateJoints() {
             latency *= OTHER_AVATAR_JOINT_LATENCY_COEFFICIENT;
         } else {
             // Latency cannot be determined yet since we have only one entry.
-            latency = 0;
+            latency = 1;
         }
         // Limit latency to a defined value.
         latency = std::min(OTHER_AVATAR_JOINT_HISTORY_MAX_LATENCY, latency);
         // We don't know the future, so avatar motions need to be delayed to be interpolated.
         auto timePoint = now - latency;
         // Retrieve previous and current joint data.
-        Q_ASSERT(history.size() > 0);
+        Q_ASSERT(history.size() >= 0);
         if (history.size() == 0) continue;
         size_t oldKeyframeIndex = history.size() - 1;
         size_t newKeyframeIndex = history.size() - 1;
